@@ -20,3 +20,5 @@ theft, battery, and motor vehicle theft are the most common crimes commit
 ## 3. Time Series
 
 ## compare with crime levels from 2022
+
+## 4. Logistic Regression
