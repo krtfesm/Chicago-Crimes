@@ -17,6 +17,10 @@ theft, battery, and motor vehicle theft are the most common crimes commit
 
 ## 2. Geographical visualization
 
+Plots of crime density in different Chicago areas were created using geopandas. These are shown below. 
+
+![image.png](attachment:image.png)
+
 ## 3. Time Series
 
 ## compare with crime levels from 2022
