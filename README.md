@@ -23,6 +23,4 @@ Plots of crime density in different Chicago areas were created using geopandas. 
 
 ## 3. Time Series
 
-## compare with crime levels from 2022
-
 ## 4. Logistic Regression
