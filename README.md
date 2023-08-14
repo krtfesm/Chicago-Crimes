@@ -19,7 +19,8 @@ theft, battery, and motor vehicle theft are the most common crimes commit
 
 Plots of crime density in different Chicago areas were created using geopandas. These are shown below. 
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/385a55a7-a2c0-452e-a3b9-f106ef929c79)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/bd15681f-4ac4-4818-a3eb-823c3eb985a0)
+
 
 ## 3. Time Series
 
