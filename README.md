@@ -8,6 +8,7 @@ Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/
 Exploratory data analysis was conducted to investigate basic information about the data set. This is present in the "EDA" 
 
 
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/50991c9e-9645-4898-8dbf-86adcdb3d663)
 
 
 Main insights: 
