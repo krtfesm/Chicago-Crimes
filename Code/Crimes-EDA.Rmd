@@ -13,10 +13,17 @@ library(EnvStats)
 library(ggpubr)
 library(ggplot2)
 library(reshape2)
-# library(sm)
 
 # df <- read.csv('C:/Users/krtfe/Downloads/Crimes_-_2023-Updated.csv')
 df <- read.csv("C:/Users/krtfe/Downloads/Crimes_-_2023 (ret. 082023).csv")
+
+cat('Pre-cleaning summary:\n\n')
+df %>% summary %>% print
+# remove duplicate rows, removed 0 rows
+df <- dplyr::distinct(df)
+
+# remove duplicate rows by case number, removed 12 rows, from 150712 to 150700
+df <- df[!duplicated(df$Case.Number),]
 
 # simplify data, remove columns that aren't useful for current project
 df <- df[c(3, 6, 7:10, 12:14)]
@@ -24,11 +31,8 @@ df <- df[c(3, 6, 7:10, 12:14)]
 # removed columns  so the data could be imported to github
 # write.csv(df, 'C:/Users/krtfe/Downloads/Crimes_-_2023-8-20.csv')
 
-# remove rows with NA values, removed 685 rows 132001 -> 131999
+# remove rows with NA values, removed 3 rows, 150700 rows -> 150679 rows
 df <- na.omit(df)
-
-# remove duplicate rows
-df <- dplyr::distinct(df)
 
 # adding useful columns, dates, times, time of day
 dates <- str_split(df$Date, pattern = ' ', simplify = TRUE)[,1]
@@ -41,14 +45,21 @@ df['Time'] <- times
 df['Time of Day'] <- time_of_day
 
 # set dataframe such that it only includes months from january to july
+# from 150679 rows -> 147596
 df <- df[df$Date < lubridate::ymd("2023-08-01"),]
 
+cat('\n\nPost-cleaning summary:\n\n')
+df %>% summary %>% print
 
+# data frame representation
 df %>% head
 
 ```
+\
+\
 
-#### Separate data frame for counts by dates and specific variables
+
+### Separate data frame for (specific variable) counts by dates:
 
 ```{r}
 # second data frame, number of crimes
@@ -75,7 +86,7 @@ for (i in dfCounts$Date) {
 tabType <- table(df$Primary.Type)
 
 # top types of primary types of crimes
-topTypes = sort(tabType, decreasing = TRUE)[1:5]
+topTypes = sort(tabType, decreasing = TRUE)[c(1:6, 8:11)]
 ttLabels = labels(topTypes)[[1]]
 
 # columns for the counts for the top types of primary types of crimes
@@ -94,9 +105,11 @@ dfCounts %>% head
 
 ```
 
+\
+\
 
 
-#### EDA by arrests, domestic, crime, ward, community area
+### EDA by arrests, domestic crimes, and general crimes:
 
 ```{r, message = FALSE, warning = FALSE}
 
@@ -175,14 +188,26 @@ aplot +
   scale_fill_brewer(palette="Set3") + 
   ylab('Daily Crimes') + 
   ggtitle('Quantile Plot, Number of Daily Crimes') + 
-  geom_hline(yintercept = max(dfCounts$`Number Of Crimes`), linetype = 'dashed', color = 'turquoise4') + 
+  geom_hline(yintercept = max(dfCounts$`Number Of Crimes`), 
+             linetype = 'dashed', 
+             color = 'turquoise4') + 
   annotate(geom = 'text', 
-           label = dfCounts[dfCounts$`Number Of Crimes` == max(dfCounts$`Number Of Crimes`), ]$Date, size = 4.2,
-           color = 'turquoise4', x = 1.25, y = max(dfCounts$`Number Of Crimes`)+20) + 
-  geom_hline(yintercept = min(dfCounts$`Number Of Crimes`), linetype = 'dashed', color = 'turquoise4') + 
+           label = dfCounts[dfCounts$`Number Of Crimes` == 
+                                max(dfCounts$`Number Of Crimes`), ]$Date, 
+           size = 4.2,
+           color = 'turquoise4', 
+           x = 1.25, 
+           y = max(dfCounts$`Number Of Crimes`) + 20) + 
+  geom_hline(yintercept = min(dfCounts$`Number Of Crimes`), 
+             linetype = 'dashed', 
+             color = 'turquoise4') + 
   annotate(geom = 'text', 
-           label = dfCounts[dfCounts$`Number Of Crimes` == min(dfCounts$`Number Of Crimes`), ]$Date, size = 4.2,
-           color = 'turquoise4', x = 1.25, y = min(dfCounts$`Number Of Crimes`)+20) + 
+           label = dfCounts[dfCounts$`Number Of Crimes` == 
+                                min(dfCounts$`Number Of Crimes`), ]$Date, 
+           size = 4.2,
+           color = 'turquoise4', 
+           x = 1.25, 
+           y = min(dfCounts$`Number Of Crimes`) + 20) + 
   # scale_x_discrete(name = 'Types of Crimes', 
   #                  limits = c('Domestic', 'Arrest') ) + 
   theme_bw()
@@ -190,8 +215,11 @@ aplot +
 
 ```
 
+\
+\
 
-#### Visualizations for the most common types of crimes in the dataset
+
+### Visualizations for the most common types of crimes in the dataset:
 
 ```{r, message = FALSE}
 
@@ -202,10 +230,11 @@ ggplot(meltedDens, aes(x = value, fill = variable)) +
   geom_density(alpha = 0.5, adjust = 1) +
   # xlim(c(0, 50)) +
   xlab('Number of Crimes') +
-  scale_fill_brewer('Variable', palette = 'Set3',
+  scale_fill_brewer('Variable', 
+                    palette = 'Set3',
                     labels = c(ttLabels)) +
   theme_bw() +
-  ggtitle('PDFs of the Top 5 Types of Crimes')
+  ggtitle('PDFs of the Top Types of Crimes')
 
 # boxplot for the most common types of crimes
 aplot <- ggplot(meltedDens, 
@@ -215,42 +244,78 @@ aplot <- ggplot(meltedDens,
 aplot + 
   scale_fill_brewer(palette="Set3") + 
   ylab('Number of Crimes') + 
-  ggtitle('Boxplots of the Top 5 Types of Crimes') +
+  ggtitle('Boxplots of the Top Types of Crimes') +
   scale_x_discrete(name = 'Types of Crimes', 
                    limits = c(ttLabels) ) + 
-  theme_bw()
+  theme_bw() +
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
 
 
 
 ```
 
-#### Correlation plot for the counts dataset
+\
+\
+
+
+### Correlation plot for the counts dataset
 
 ```{r}
 
+# split correlation plots for better visualization
 corrCounts <- dfCounts[3:9] %>% cor(method = 'pearson')
 corrCounts %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
                                       colors = c('lightgoldenrod2', 'white', 
                                                  'palegreen4'))
 
+corrCounts2 <- dfCounts[c(3:4, 10:14)] %>% cor(method = 'pearson')
+corrCounts2 %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
+                                       colors = c('lightgoldenrod2', 'white', 
+                                                  'palegreen4'))
+
+
 ```
 
+\
+Correlation plots were mostly created to investigate different crimes 
+relationships with domestic crimes and crimes with arrest.
+
+All crimes had positive correlations with arrests. Motor vehicle theft and 
+deceptive practice had the lowest correlations with arrests while weapons
+violations and narcotics had the highest correlations with arrests. 
+
+Whether or not crimes were correlated with domestic crimes depended on the 
+crimes. Battery and criminal damage had the highest correlations with domestic 
+crimes, while narcotics and deceptive practice had the lowest correlations with 
+domestic crimes. 
+
+\
+\
 
 
-#### Cleaning for data visualization
+### Cleaning for data visualization
 
 ```{r}
 
-# dataset for each type of primary type of crime, with their frequency counts
-tabTypeDF <- data.frame(tabType)
+# # dataset for each type of primary type of crime, with their frequency counts
+stabType <- tail(sort(tabType), 10)
+tabTypeDF <- data.frame(stabType)
+# tabTypeDF <- data.frame(tabType)
 colnames(tabTypeDF) <- c('Types', 'Frequency')
 
 # convert types of crimes from factor to string
 tabTypeDF$Types <- sapply(tabTypeDF$Types, toString)
 
+# sum other crimes that won't be included in visualization
+otherCrimesSum <- sum(tabTypeDF[tabTypeDF$Frequency < stabType[1],]$Frequency)
+
+# other crimes variable that is already set
+otherCrimesVal <- tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE',]$Frequency
+                  
 # Move specific crime types to the "other offense" column for better visualization
-tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE', 2] <- sum(sum(tabTypeDF[tabTypeDF$Frequency < 1000,]$Frequency), 
-                                                        tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE',]$Frequency)
+tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE', 2] <- sum(otherCrimesSum, 
+                                                        otherCrimesVal)
 
 # sorting the dataset
 tabTypeDF <- tabTypeDF[order(tabTypeDF$Frequency),]
@@ -262,8 +327,11 @@ tabTypeDF$Types <- factor(tabTypeDF$Types, levels = rev(tabTypeDF$Types))
 
 ```
 
+\
+\
 
-#### Pie and bar plots
+
+### Pie and bar plots
 
 ```{r}
 
@@ -277,7 +345,9 @@ pieP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,],
         theme(plot.title = element_text(hjust = 0.5)) +
         geom_text(aes(label = paste0(round(100*Frequency/sum(Frequency)),
                                      "%")), 
-                  position = position_stack(vjust = 0.5))
+                  position = position_stack(vjust = 0.5)) + 
+        scale_fill_brewer('Types', palette = 'Set3',
+                          labels = c(tabTypeDF$Types))
 
 # Bar plot for the most common types of crimes commit
 barP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,], 
@@ -286,7 +356,9 @@ barP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,],
         theme_bw()  + 
         theme(axis.text.x = element_blank(),
               axis.ticks.x = element_blank()) + 
-        ggtitle(paste('Types of Crimes')) 
+        ggtitle(paste('Types of Crimes')) + 
+        scale_fill_brewer('Types', palette = 'Set3',
+                          labels = c(tabTypeDF$Types))
 
 # Calculations for below bar plot
 numDays <- length(unique(df$Date))
@@ -300,7 +372,9 @@ barPAvg <- ggplot(tabTypeDFAvg[tabTypeDFAvg$Frequency > 1,],
                theme_bw()  + 
                theme(axis.text.x = element_blank(),
                      axis.ticks.x = element_blank()) + 
-               ggtitle(paste('Mean Crimes Per Day')) 
+               ggtitle(paste('Mean Crimes Per Day')) + 
+        scale_fill_brewer('Types', palette = 'Set3',
+                          labels = c(tabTypeDF$Types))
 
 # visualization of the plots
 pieP
@@ -310,23 +384,35 @@ barPAvg
 ```
 
 
-#### Clock of when most crimes happened during the day
+\
+\
+
+
+### Clock of when most crimes happened during the day
+
 ```{r}
 
-# 
-hourTimesAM <- substr(df[df$`Time of Day` == 'AM',]$Time, start = 1, stop = 2)
-# turn 12 AM to 00 AM
+# Getting hour integers for when the time of day is AM
+hourTimesAM <- df[df$`Time of Day` == 'AM',]$Time %>% 
+               substr(start = 1, stop = 2)
+# turn 12 AM to 00 AM, for easier viz
 hourTimes <- ifelse(hourTimesAM == '12', '00', hourTimesAM)
-hourTimesPM <- c(substr(df[df$`Time of Day` == 'PM',]$Time, start = 1, stop = 2))
-# add 12 to all except 12 PM
+
+# Getting hour integers for when the time of day is PM
+hourTimesPM <- df[df$`Time of Day` == 'PM',]$Time %>%
+                            substr(start = 1, stop = 2) %>% 
+                            c
+# add 12 to all except 12 PM for PM times for easier viz
 hourTimes <- c(hourTimes, ifelse(as.integer(hourTimesPM) != 12,
                                  as.integer(hourTimesPM) + 12, 
                                  hourTimesPM))
 
+# calculating frequencies for specific hour integers
 hourTimesFreq <- table(hourTimes)
 hourTimesDF <- data.frame(hourTimesFreq)
 colnames(hourTimesDF) <- c('Hours', 'Frequency')
 
+# visualizing a clock for when crimes most frequently occur 
 barP <- ggplot(hourTimesDF, 
                aes(x=Hours, y=Frequency, fill = Hours)) +
         geom_bar(stat="identity", width=1, color = 'white') +
@@ -339,11 +425,18 @@ barP
 
 
 ```
+\
+Crimes happened the most at 12 AM. The occurrence of crimes decreased 
+throughout the day when not including 12 AM. 
+\
+\
 
-#### Total crimes by each month
+
+### Total crimes by each month
 
 ```{r}
 
+# add column just to specify months in the dataframe
 dfCounts['Month'] <- dplyr::case_when(grepl('-01-', dfCounts$Date) ~ '1',
                                       grepl('-02-', dfCounts$Date) ~ '2',
                                       grepl('-03-', dfCounts$Date) ~ '3',
@@ -352,13 +445,17 @@ dfCounts['Month'] <- dplyr::case_when(grepl('-01-', dfCounts$Date) ~ '1',
                                       grepl('-06-', dfCounts$Date) ~ '6',
                                       grepl('-07-', dfCounts$Date) ~ '7')
 
-dfCountsMonths <- data.frame('Months' = unique(dfCounts$Month), row.names = c(unique(dfCounts$Month)))
+# create dataframe specifically for months, for data viz
+dfCountsMonths <- data.frame('Months' = unique(dfCounts$Month), 
+                             row.names = c(unique(dfCounts$Month)))
 
+# sum total crimes for each month
 for (i in unique(dfCounts$Month)) {
-    dfCountsMonths[i, 'Total Crimes'] <- sum(dfCounts[dfCounts$Month == i,]$`Number Of Crimes`)
+    monthsSum <- sum(dfCounts[dfCounts$Month == i,]$`Number Of Crimes`)
+    dfCountsMonths[i, 'Total Crimes'] <- monthsSum
 }
 
-
+# bar plot for unique months
 dfCountsMonths %>% ggplot(aes(x=Months, y=`Total Crimes`, fill = Months)) +
                           scale_fill_brewer(palette="Set3") + 
                           geom_bar(stat="identity", width=1, color = 'white') +
@@ -369,5 +466,6 @@ dfCountsMonths %>% ggplot(aes(x=Months, y=`Total Crimes`, fill = Months)) +
 
 ```
 
-
+The occurrence of crimes increased throughout the year month by month, except
+for January. 
 
