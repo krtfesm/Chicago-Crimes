@@ -25,4 +25,3 @@ Plots of crime density in different Chicago areas were created using geopandas. 
 
 ## 3. Time Series
 
-## 4. Logistic Regression
