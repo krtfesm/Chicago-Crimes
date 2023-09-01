@@ -22,6 +22,9 @@ Plots of crime density in different Chicago areas were created using geopandas. 
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/678190d7-c957-47f1-b6a3-b9cda42e2f88)
 
+By this, Fuller Park has the highest density of crimes (0.144%) by population for the community areas, while Edison Park has the smallest density of crimes (0.0124%) by population.
+Furthermore, Austin has the highest number of overall crimes (6615) for the community areas, while Edison Park has the smallest number of overall crimes (143).
+
 
 ## 3. Time Series
 
