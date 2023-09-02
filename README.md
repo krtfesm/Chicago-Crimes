@@ -4,7 +4,7 @@
 ### *Dataset*
 Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023).
 
-## 1. EDA
+## 1. Data Cleaning and EDA
 Exploratory data analysis was conducted to investigate basic information about the data set. This is present in the "EDA" 
 
 
@@ -15,6 +15,16 @@ Main insights:
 * Crimes occur most at 12 am, slowly decrease over time from midday.
 
 theft, battery, and motor vehicle theft are the most common crimes commit
+
+Crimes like Motor Vehicle Theft and Criminal Damage have similar distributions.
+
+Correlation plots were mostly created to investigate different crimes relationships with domestic crimes and
+crimes with arrest.
+All crimes had positive correlations with arrests. Motor vehicle theft and deceptive practice had the lowest
+correlations with arrests while weapons violations and narcotics had the highest correlations with arrests.
+Whether or not crimes were correlated with domestic crimes depended on the crimes. Battery and criminal
+damage had the highest correlations with domestic crimes, while narcotics and deceptive practice had the
+lowest correlations with domestic crimes.
 
 ## 2. Geographical visualization
 
