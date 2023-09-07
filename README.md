@@ -38,3 +38,5 @@ Furthermore, Austin has the highest number of overall crimes (6615) for the comm
 
 ## 3. Time Series
 
+A time series model was created to predict current crime trends (2023) based on past crime trends (2001-2022)
+
