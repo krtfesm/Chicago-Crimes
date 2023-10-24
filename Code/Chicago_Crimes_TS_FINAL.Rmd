@@ -1,0 +1,817 @@
+---
+title: "Crimes Time Series"
+author: "Kristin Fesmire"
+date: "2023-08-25"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, warning = FALSE, message = FALSE}
+rm(list = ls())
+
+library(stringr)
+library(ggplot2)
+library(forecast)
+library(reshape2)
+
+df <- read.csv("C:/Users/krtfe/Downloads/Crimes_-_2023 (ret. 082023).csv")
+
+cat('Pre-cleaning summary:\n\n')
+df %>% summary %>% print
+# remove duplicate rows, removed 0 rows
+df <- dplyr::distinct(df)
+
+# remove duplicate rows by case number, removed 12 rows, from 150712 to 150700
+df <- df[!duplicated(df$Case.Number),]
+
+# simplify data, remove columns that aren't useful for current project
+df <- df[c(3, 6, 7:10, 12:14)]
+
+# remove rows with NA values, removed 3 rows, 150700 rows -> 150679 rows
+df <- na.omit(df)
+
+# add the useful columns and transform data types
+df['Time'] <- str_split(df$Date, 
+                        pattern = ' ', 
+                        simplify = TRUE)[,2]
+df['Time of Day'] <- str_split(df$Date, 
+                               pattern = ' ', 
+                               simplify = TRUE)[,3]
+df['Date'] <- str_split(df$Date, 
+                        pattern = ' ', 
+                        simplify = TRUE)[,1] %>% 
+                as.Date(format = '%m/%d/%Y')
+
+# set dataframe such that it only includes months from january to july
+# from 150679 rows -> 147596
+df <- df[df$Date < lubridate::ymd("2023-08-01"),]
+
+cat('\n\nPost-cleaning summary:\n\n')
+df %>% summary %>% print
+
+# data frame representation
+df %>% head
+
+```
+
+\
+\
+
+
+
+### Separate data frame for (specific variable) counts by dates, from 2001 to 2022:
+
+```{r, warning = FALSE, message = FALSE}
+
+# Crimes from 2001 to 2023 (Jan-July)
+dfTotal <- read.csv("C:/Users/krtfe/Downloads/Crimes_-_2001_to_Present.csv")
+
+# adding useful columns, dates, times, time of day
+dfTotal['Date'] <- substr(dfTotal$Date, 
+                          1, 
+                          10)
+
+# transform data types
+dfTotal['Date'] <- as.Date(dfTotal$Date, 
+                           format = '%m/%d/%Y')
+
+# set dataframe such that it only includes months from january to july
+# from 150679 rows -> 147596
+dfTotal <- dfTotal[dfTotal$Date < lubridate::ymd("2023-01-01"),] %>%
+    sort
+
+# data frame representation
+dfTotal %>% head
+dfTotal %>% tail
+    
+
+```
+
+\
+\
+
+### Frequency table for total crimes in 2023:
+
+```{r}
+
+# second data frame, number of crimes
+
+# start with the unique dates and their counts
+counts2023 <- table(df$Date) %>% 
+                data.frame
+colnames(counts2023) <- c('Date', 'Number of Crimes')
+
+# printing the counts dataset
+counts2023 %>% head
+
+```
+
+\
+\
+
+### Frequency table for total crimes from 2001 to 2022:
+
+```{r}
+
+# start with the unique dates and their counts
+numCrimesTotal <- table(dfTotal)
+countsTotal <- data.frame(numCrimesTotal)
+colnames(countsTotal) <- c('Date', 
+                           'Number of Crimes')
+
+countsTotal %>% head
+
+```
+
+\
+\
+
+### Add a variable for when there is a leap day:
+
+```{r, warning = FALSE, message = FALSE}
+
+# 1 for a leap day, 0 for not a leap day
+countsTotal['Leap Days'] <- grepl('02-29', countsTotal$Date) %>% 
+                                ifelse(1, 0)
+counts2023['Leap Days'] <- rep(0, nrow(counts2023))
+
+```
+
+\
+\
+
+### Add a variable for when it is new years:
+
+```{r, warning = FALSE, message = FALSE}
+
+# 1 for new years, 0 for not new years
+countsTotal['New Years'] <- grepl('-01-01', countsTotal$Date) %>% 
+                                ifelse(1, 0)
+counts2023['New Years'] <- c(1, rep(0, nrow(counts2023)-1))
+
+```
+
+\
+\
+
+### Visualization of 2023 (Jan through August) crimes time series:
+
+```{r}
+
+# ts for visualization
+crimes23 <- ts(counts2023,
+               frequency = 365,
+               deltat = 1/365)
+
+crimes23[,2] %>% autoplot(xlab = 'Time (Days)',
+                     ylab = 'Number of Crimes',
+                     main = 'Crimes in 2023')
+
+
+```
+
+\
+\
+
+### Visualization of 2001 - 2022 crimes time series:
+
+```{r}
+
+# ts for visualization
+crimes01_22 <- ts(countsTotal,
+                  start = c(2001, 1),
+                  end = c(2022, 365),
+                  frequency = 365,
+                  deltat = 1/365)
+
+autoplot(crimes01_22[,2], 
+         ylab = 'Number of Crimes',
+         xlab = 'Time (Days)',
+         main = 'Crimes 2001-2022')
+
+
+```
+
+\
+The initial time series visually shows a downward trend and seasonality.
+The seasonality seems to be yearly. 
+The variance in the data also seems to be non-constant. A box-cox transformation may help this.
+\
+\
+
+### Setting other time series:
+
+```{r}
+
+# time series, 2001-2019
+crimes01_19 <- ts(countsTotal, 
+                  start = c(2001, 1),
+                  end = c(2019, 365),
+                  frequency = 365,
+                  deltat = 1/365)
+
+# time series, 2020-2022
+crimes20_22 <- ts(countsTotal[6940:nrow(countsTotal),],
+                  start = c(2020, 1),
+                  end = c(2022, 365),
+                  frequency = 365,
+                  deltat = 1/365)
+
+# crimes from 2001-2019, multiple seasonality
+crimes01_19MS <- msts(countsTotal,
+                      start = c(2001, 1),
+                      end = c(2019, 365),
+                      seasonal.periods = c(365, 
+                                           7))
+
+# time series, 2020-2022, multiple seasonality
+crimes20_22MS <- msts(countsTotal[6940:nrow(countsTotal),],
+                      start = c(2020, 1),
+                      end = c(2022, 365),
+                      seasonal.periods = c(365, 
+                                           7))
+
+# time series, 2001-2023
+counts01_23 <- rbind(countsTotal, counts2023)
+
+crimes01_23 <- ts(counts01_23, 
+                  start = c(2001, 1),
+                  frequency = 365)
+
+# time series, 2020-2023
+crimes20_23 <- ts(counts01_23[6940:nrow(counts01_23),],
+                  start = c(2020, 1),
+                  frequency = 365,
+                  deltat = 1/365)
+
+# time series, 2001-2023, multiple seasonality
+crimes01_23MS <- msts(counts01_23,
+                      start = c(2001, 1),
+                      seasonal.periods = c(365, 
+                                           7))
+
+# time series, 2020-2023, multiple seasonality
+crimes20_23MS <- msts(counts01_23[6940:nrow(counts01_23),],
+                      start = c(2020, 1),
+                      seasonal.periods = c(365, 
+                                           7))
+
+
+```
+
+\
+\
+
+### Is the distribution normally distributed? 
+
+```{r}
+
+# Histogram for number of crimes, 2001-2022
+hist(countsTotal$`Number of Crimes`, 
+     breaks = 100,
+     main = 'Crimes Histogram (2001-2022)',
+     xlab = 'Crime Counts')
+
+# Normality plots for number of crimes, 2001-2022
+qqnorm(countsTotal$`Number of Crimes`,
+       main = 'Q-Q Plot for Normality, Crimes (2001-2022)')
+qqline(countsTotal$`Number of Crimes`)
+
+# Histogram for number of crimes, 2001-2022
+hist(counts2023$`Number of Crimes`, 
+     breaks = 100,
+     main = 'Crimes Histogram (2023)',
+     xlab = 'Crime Counts')
+
+# Normality plots for number of crimes, 2023
+qqnorm(counts2023$`Number of Crimes`,
+       main = 'Q-Q Plot for Normality, Crimes (2023)')
+qqline(counts2023$`Number of Crimes`)
+
+# Histogram for number of crimes (after differencing), 2001-2022
+hist(diff(countsTotal$`Number of Crimes`), 
+     breaks = 100,
+     main = 'Crimes Histogram (Differenced by 1) (2001-2023)',
+     xlab = 'Crime Counts')
+
+# Normality plots for number of crimes (after differencing), 2001-2022
+qqnorm(diff(countsTotal$`Number of Crimes`),
+       main = 'Q-Q Plot for Normality, Crimes (Diff = 1) (2001-2023)')
+qqline(diff(countsTotal$`Number of Crimes`))
+
+
+```
+
+\
+By the histogram of the 2023 crime counts, the crime counts seem to be normally distributed.
+
+After differencing the total time series by one, the time series seems to represent a normal distribution. 
+\
+\
+
+### ACF of Total Time Series:
+
+```{r}
+
+# acf for entire time series
+ggAcf(crimes01_22[,2], 
+      lag.max = nrow(crimes01_22)) +
+    ggtitle('ACF for Entire Time Series')
+
+# PACF for entire time series
+ggAcf(crimes01_22[,2], 
+      lag.max = 100,
+      type = 'partial') +
+    ggtitle('PACF for Entire Time Series')
+
+# ACF for first 100 days of time series (to look at time series closer)
+ggAcf(crimes01_22[,2], 
+      lag.max = 100) +
+    ggtitle('ACF for 100 Days')
+
+```
+
+\
+The ACF shows a clear downward trend and yearly seasonality in the data in the ACF plot for the entire time series.
+
+From the 100 days ACF plot, it seems that there is a type of weekly seasonality in the data as well. 
+
+By the above, the ACF plot shows non-stationarity in the time series.
+\
+\
+
+
+### Application of a Box-Cox transformation, which reduces variance in the model:
+
+```{r}
+
+# ideal lambda value calculated for boxcox transformation
+lambdaCrimes <- BoxCox.lambda(crimes01_22[,2])
+
+# Presenting the transformed values
+BoxCox(crimes01_22[,2], 
+       lambda = lambdaCrimes) %>%
+    autoplot(ylab = 'Number of Crimes',
+             main = 'Crimes (2001-2022), Transformed')
+
+
+```
+
+\
+Applying a box-cox transformation appeared to remove the non-constant variance in the model. 
+\
+\
+
+### KPSS Test for Stationarity:
+
+```{r}
+
+# KPSS test for stationarity, hospitalizations
+cat('KPSS Test for Cases, Segment 1:\n')
+tseries::kpss.test(crimes01_22[,2], null = 'Trend')
+
+```
+
+\
+Since the p-value from the KPSS test is less than 0.05, the null hypothesis that the time series is trend stationary can be rejected.
+This follows my previous hypothesis of non-stationarity in the data.
+\
+\
+
+### Seasonality (yearly):
+
+```{r}
+
+ggseasonplot(crimes01_22[,2]) +
+  ylab('Crime Counts') +
+  xlab('Month') + 
+  ggtitle("Yearly Seasonality Plot: Chicago Crimes")
+
+
+```
+
+\
+The seasonality plot shows a clear curve throughout the course of the year. 
+\
+\
+
+### Seasonality (weekly):
+
+```{r}
+
+# time series for just weekly seasonality visualization
+crimesWeekly <- ts(countsTotal, 
+                   start = c(2001, 1),
+                   end = c(2019, 365),
+                   frequency = 7,
+                   deltat = 1/7)
+
+crimesWeekly[,2] %>%
+   ggseasonplot() +
+        ylab('Crime Counts') +
+        xlab('Day') + 
+        ggtitle("Weekly Seasonality Plot: Chicago Crimes") +
+        theme(legend.position = 'none')
+
+# boxplots by day
+crimesWeekly[,2] %>%
+    split(cycle(crimesWeekly)) %>%
+    melt %>%
+    ggplot(aes(x = L1, 
+               y = value, 
+               fill = L1)) + 
+      geom_boxplot() + 
+      scale_fill_brewer(palette="Set3", name='Day of Week') + 
+      ylab('Number of Crimes') +
+      xlab('Day of Week') + 
+      ggtitle('Boxplots for Number of Crimes by Day')
+
+
+```
+
+\
+After plotting seasonality of weekly seasonality, there seems to be a slight pattern in weekly seasonality.
+\
+\
+
+### Decomposition (solely yearly seasonality):
+
+```{r}
+
+# decomposed time series
+decompTS <- decompose(crimes01_19[,2])
+
+# plotting decomposed time series
+decompTS %>% autoplot
+
+# ACF for decomposed time series
+na.omit(decompTS$random) %>% 
+    ggAcf(lag.max = length(decompTS$random))
+
+
+```
+
+\
+Removing the trend and stationarity from the time series seems to leave some potential non-constant variance, as the variance is larger at the beginning of the time series and smaller at the end. The lambda value from the box-cox transformation hopefully will help with this.
+
+After computing the time series after seasonality and trend were removed, there still seems to be some kind of pattern in the data because of the large correlations in the ACF. 
+\
+\
+
+### Decomposition (weekly and yearly seasonality together):
+
+```{r}
+
+# decomposition of time series with multiple seasonality
+decompTSMS <- crimes01_19MS[,2] %>% 
+                mstl(lambda = lambdaCrimes)
+
+# plot of decomposed time series
+decompTSMS %>% 
+    autoplot
+
+# ACF of decomposed time series
+decompTSMS[,5 ] %>% 
+    ggAcf(lag.max = length(decompTSMS[,5]))
+
+```
+
+\
+After using decomposition that removes weekly seasonality alongside yearly seasonality and the trend, the time series shows much smaller correlations in the ACF. 
+\
+\
+Now that basic information about the time series is understood, the models for the time series will be built. A number of different strategies will be used. These strategies include the use of ARIMA, TBATS, STLM ARIMA, and STLM ETS to build the models. Also, the ARIMA models will be built with just yearly seasonality for one model and both yearly and weekly seasonality (MS = multiple seasonality) for other models. 
+
+The models will be built using data from 2001 to 2019. Furthermore, the models will be compared based on accuracy measures from building the models. The models will also be compared using accuracy measures from comparing forecasted values from 2020 to 2023 with actual values from 2020 to 2023. 
+By the above, the best model will be chosen.
+\
+\
+
+# Model Creation:
+
+### Fitting the model to find the ideal Arima model (just yearly seasonality):
+
+```{r}
+
+# ARIMA model of time series with just yearly seasonality
+crimesArima <- auto.arima(crimes01_19[,2], 
+                          stationary = FALSE,
+                          lambda = lambdaCrimes,
+                          biasadj = FALSE,
+                          d = 1,
+                          D = 1,
+                          xreg = crimes01_19[,3])
+
+# forecast of arima model
+foreArima <- forecast(crimesArima, 
+                      biasadj = FALSE,
+                      lambda = lambdaCrimes,
+                      xreg = crimes20_23[,3])
+
+# summary of the model
+summary(crimesArima)
+
+# plot of the model
+autoplot(crimesArima)
+
+# plot of the model with 
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, Arima(4,1,2)(0,1,0) Forecast') + 
+    autolayer(foreArima$mean, 
+              series = 'Arima(4,1,2)(0,1,0)',
+              alpha = 0.65,
+              color = 'red')
+    
+
+# check the residuals of the model to determine whether they are normal
+residArima <- checkresiduals(crimesArima)
+
+
+
+```
+
+\
+\
+
+### Fitting the model to find the ideal Arima model (yearly seasonality + weekly seasonality):
+
+```{r, warning = FALSE}
+
+# 
+crimesArimaMS <- auto.arima(crimes01_19MS[,2], 
+                        stationary = FALSE,
+                        seasonal = FALSE,
+                        lambda = lambdaCrimes,
+                        biasadj = FALSE,
+                        xreg = cbind(crimes01_19MS[,3],
+                                     crimes01_19MS[,4],
+                                     fourier(crimes01_19MS[,2], 
+                                              K=c(3,3))))
+
+foreArimaMS <- forecast(crimesArimaMS,
+                        lambda = lambdaCrimes,
+                        biasadj = FALSE,
+                        xreg = cbind(crimes20_23MS[,3],
+                                     crimes20_23MS[,4],
+                                     fourier(crimes20_23MS[,2], 
+                                              K=c(3,3))))
+
+summary(crimesArimaMS)
+
+autoplot(crimesArimaMS)
+
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, Arima(1,1,2) MS') +
+    autolayer(foreArimaMS$mean, 
+              series = 'Arima(1,1,2) MS',
+              alpha = 0.65,
+              color = 'red')
+ 
+residArimaMS <- checkresiduals(crimesArimaMS)
+
+
+```
+
+\
+\
+
+### TBATS model:
+
+```{r}
+
+crimesTbats <- tbats(crimes01_19[,2],
+                     use.trend = TRUE,
+                     seasonal.periods = c(7, 365),
+                     use.box.cox = TRUE)
+
+foreTbats <- forecast(crimesTbats, 
+                      h=365*3+212)
+
+crimesTbats
+
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, TBATS') +
+    autolayer(foreTbats$mean, 
+              series = 'TBATS',
+              alpha = 0.65,
+              color = 'red')
+
+residTbats <- checkresiduals(crimesTbats)
+
+```
+
+\
+\
+
+### ETS model:
+
+```{r}
+
+crimesETS <- stlm(crimes01_19[,2], 
+                  method = 'ets',
+                  allow.multiplicative.trend = TRUE,
+                  biasadj = FALSE,
+                  lambda = lambdaCrimes)
+
+foreETS <- forecast(crimesETS, 
+                    biasadj = FALSE,
+                    lambda = lambdaCrimes,
+                    h=365*3+212)
+
+crimesETS$model
+
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, STLM (ETS)') +
+    autolayer(foreETS$mean, 
+              series = 'STLM (ETS)',
+              alpha = 0.65,
+              color = 'red')
+
+residETS <- checkresiduals(crimesETS)
+
+```
+
+\
+\
+
+### STLM model (just yearly seasonality):
+
+```{r}
+
+crimesSTLM <- stlm(crimes01_19[,2], 
+                   method = 'arima',
+                   xreg = crimes01_19[,3],
+                   biasadj = FALSE,
+                   lambda = lambdaCrimes)
+
+foreSTLM <- forecast(crimesSTLM, 
+                     biasadj = FALSE,
+                     xreg = crimes20_23[,3],
+                     lambda = lambdaCrimes)
+
+crimesSTLM$model
+
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, STLM (ARIMA(3,1,2))') +
+    autolayer(foreSTLM$mean, 
+              series = 'STLM (ARIMA)',
+              alpha = 0.65,
+              color = 'red')
+
+residSTLM <- checkresiduals(crimesSTLM)
+
+```
+
+\
+\
+
+### STLM model (yearly seasonality + weekly seasonality):
+
+```{r}
+
+crimesSTLM_MS <- stlm(crimes01_19MS[,2], 
+                      method = 'arima',
+                      lambda = lambdaCrimes,
+                      biasadj = FALSE,
+                      xreg = cbind(crimes01_19MS[,3],
+                                   crimes01_19MS[,4],
+                                   fourier(crimes01_19MS[,2], 
+                                           K=c(3,3))))
+
+foreSTLM_MS <- forecast(crimesSTLM_MS,
+                        lambda = lambdaCrimes,
+                        biasadj = FALSE,
+                        xreg = cbind(crimes20_23MS[,3],
+                                     crimes20_23MS[,4],
+                                     fourier(crimes20_23MS[,2], 
+                                              K=c(3,3))))
+
+crimesSTLM_MS$model
+
+autoplot(crimes01_23[,2],
+         ylab = 'Number of Crimes',
+         main = 'Chicago Crimes, STLM (ARIMA(4,1,2)) MS') +
+    autolayer(foreSTLM_MS$mean, 
+              series = 'STLM (ARIMA) MS',
+              alpha = 0.65,
+              color = 'red')
+
+residSTLM_MS <- checkresiduals(crimesSTLM_MS)
+
+
+```
+
+\
+\
+
+### Table comparing the different models:
+
+```{r}
+
+errorStats <- data.frame(rbind(round(c(accuracy(crimesArima), 
+                                       residArima$statistic,
+                                       crimesArima$aic,
+                                       crimesArima$loglik), 5), 
+                               round(c(accuracy(crimesArimaMS), 
+                                       residArimaMS$statistic,
+                                       crimesArimaMS$aic,
+                                       crimesArimaMS$loglik), 5),
+                               round(c(accuracy(crimesTbats), 
+                                       residTbats$statistic,
+                                       crimesTbats$AIC,
+                                       crimesTbats$likelihood/-2), 5),
+                               round(c(accuracy(crimesETS), 
+                                       residETS$statistic,
+                                       crimesETS$model$aic,
+                                       crimesETS$model$loglik), 5),
+                               round(c(accuracy(crimesSTLM), 
+                                       residSTLM$statistic,
+                                       crimesSTLM$model$aic,
+                                       crimesSTLM$model$loglik), 5),
+                               round(c(accuracy(crimesSTLM_MS), 
+                                       residSTLM_MS$statistic,
+                                       crimesSTLM_MS$model$aic,
+                                       crimesSTLM_MS$model$loglik), 5)),
+                         row.names = c('ARIMA',
+                                       'ARIMA (MS)',
+                                       'TBATS',
+                                       'STLM ETS',
+                                       'STLM ARIMA',
+                                       'STLM ARIMA (MS)')) 
+
+colnames(errorStats) <- c(colnames(accuracy(crimesArima)),
+                          'Ljung-Box Stat. Q*',
+                          'AIC',
+                          'LogLik')
+
+print(errorStats)
+
+```
+
+\
+By this table, the STLM ARIMA (MS) model seems to perform the best. 
+This model has the lowest ME, RMSE, MAE, MASE, AIC, and Log Likelihood values 
+and the smallest absolute values for MPE and ACF1. 
+Along with this, this model has the smallest test statistic among all models
+for the Ljung-Box test. By this, though the residuals of the model still
+show some correlation, this model provides the best residuals.
+By this, a model using STLM ARIMA with multiple seasonality provides the most accurate model.
+\
+\
+
+### Testing dataset accuracy:
+
+```{r}
+
+# crimesArima, crimesArimaMS, crimesTbats, crimesETS, crimesSTLM, crimesSTLM_MS
+ 
+data.frame(rbind(round(accuracy(crimes01_23[,2], 
+                                foreArima$mean), 5), 
+                 round(accuracy(crimes01_23[,2], 
+                                foreArimaMS$mean), 5),
+                 round(accuracy(crimes01_23[,2], 
+                                foreTbats$mean), 5),
+                 round(accuracy(crimes01_23[,2], 
+                                foreETS$mean), 5),
+                 round(accuracy(crimes01_23[,2], 
+                                foreSTLM$mean), 5),
+                 round(accuracy(crimes01_23[,2], 
+                                foreSTLM_MS$mean), 5)),
+           row.names = c('ARIMA',
+                         'ARIMA (MS)',
+                         'TBATS',
+                         'STLM ETS',
+                         'STLM ARIMA',
+                         'STLM ARIMA (MS)')) %>%
+    print()
+
+
+```
+
+\
+After calculating the forecasts of each model from 2020 to 2023, the forecasts 
+were used to calculate the accuracy of the model using the test data 
+(actual 2020 to 2023 crime values). 
+
+From these calculations, the STLM ARIMA had the best ME, RMSE, MAE, MAPE, and 
+ACF1 values. ARIMA had the best MPE value and the best Theil.s.U value. 
+
+By this, STLM ARIMA seemed to give the most accurate predictions when testing.
+STLM ARIMA (MS) also gave relatively accurate predictions.
+
+STLM ETS and TBATS performed the worst of all the models. 
+\
+\
+
+From the above observations, the STLM ARIMA model with multiple seasonality 
+gave the best overall results, and that model will be used for time series 
+predictions for crime counts in Chicago. 
+
+\
+\
