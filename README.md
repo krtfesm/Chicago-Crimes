@@ -49,6 +49,7 @@ Error Stats of the models, comparing test data with actual data:
 
 
 Chicago Time Series with forecast:
+
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/c4dd1221-3dd0-45a1-91d6-fa590f9b32f4)
 
 
