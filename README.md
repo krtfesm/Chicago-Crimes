@@ -42,8 +42,10 @@ A time series model was created to predict current crime trends (January 2020 - 
 
 ### *Chicago Crimes Time Series (January 2001 to July 2022):*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/f7ed8f81-2467-42cc-9541-e52ebcfcfde4)
+
 \
 \
+
 Basic information understood about the time series from the initial analysis includes:
 * Yearly seasonality
 * Weekly seasonality
@@ -51,19 +53,28 @@ Basic information understood about the time series from the initial analysis inc
 * Spikes on New Years Day
   
 \
+
 Six different models were built for the Chicago Crimes time series. These models are compared below in the two tables.
 \
+
 ### *Error Stats of the Models:*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/2ad6dbd3-d4a5-48cb-9e83-654e2abc9087)
+
 \
+
 ### *Error Stats of the models, comparing test data with actual data:*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/94b82e83-c6b1-4f20-b29d-f5262bd12f6e)
+
 \
+
 ### *Chicago Time Series with STLM ARIMA(4, 1, 2) Forecast with Multiple Seasonality:*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/dc6043a5-be82-4874-91c3-7c2155693733)
+
 \
+
 ### *STLM ARIMA(4, 1, 2) Forecast Residuals:* 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/56ebb78e-d9ad-4d16-8d9d-530d22991833)
+
 \
 
 
