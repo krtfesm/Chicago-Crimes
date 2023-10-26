@@ -41,27 +41,33 @@ Furthermore, Austin has the highest number of overall crimes (6615) for the comm
 A time series model was created to predict current crime trends (2023) based on past crime trends (2001-2022)
 
 Chicago Crimes Time Series (January 2001 to July 2022): 
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/f7ed8f81-2467-42cc-9541-e52ebcfcfde4)
-
+\
 Yearly Seasonality Plot:
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/0809a7fd-1947-49bb-ae3e-e885a90ea329)
-
+\
 Weekly Seasonality Plot: 
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/9736d4c9-6508-44ea-ad10-647055d2bcd2)
-
+\
 Error Stats of the Models:
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/2ad6dbd3-d4a5-48cb-9e83-654e2abc9087)
-
+\
 Error Stats of the models, comparing test data with actual data:
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/94b82e83-c6b1-4f20-b29d-f5262bd12f6e)
-
+\
 Chicago Time Series with STLM ARIMA(4, 1, 2) Forecast with Multiple Seasonality:
+\
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/dc6043a5-be82-4874-91c3-7c2155693733)
-
+\
 STLM ARIMA(4, 1, 2) Forecast Residuals: 
 \
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/56ebb78e-d9ad-4d16-8d9d-530d22991833)
-
+\
 
 
 
