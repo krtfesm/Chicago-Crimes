@@ -43,11 +43,13 @@ A time series model was created to predict current crime trends (January 2020 - 
 ### *Chicago Crimes Time Series (January 2001 to July 2022):*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/f7ed8f81-2467-42cc-9541-e52ebcfcfde4)
 \
+\
 Basic information understood about the time series from the initial analysis includes:
 * Yearly seasonality
 * Weekly seasonality
 * A downwards trend
 * Spikes on New Years Day
+  
 \
 Six different models were built for the Chicago Crimes time series. These models are compared below in the two tables.
 \
