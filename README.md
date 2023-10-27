@@ -53,11 +53,7 @@ Basic information understood about the time series from the initial analysis inc
 
 Six different models were built for the Chicago Crimes time series. These models are compared below in the two tables.
 
-
-
-
-
-
+\ 
 
 
 ### *Error Statistics of the Models:*
@@ -71,8 +67,7 @@ Six different models were built for the Chicago Crimes time series. These models
 By the analysis of the errors, the best model was found to be the STLM ARIMA model with multiple seasonality. 
 This model, its predictions for Jan. 2020 to July 2023, and information about its residuals are shown below.
 
-\
-\
+\ 
 
 
 ### *Chicago Time Series with STLM ARIMA(4, 1, 2) Forecast with Multiple Seasonality:*
