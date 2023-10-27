@@ -53,7 +53,7 @@ Basic information understood about the time series from the initial analysis inc
 
 Six different models were built for the Chicago Crimes time series. These models are compared below in the two tables.
 
-\ 
+\_
 
 
 ### *Error Statistics of the Models:*
