@@ -40,6 +40,8 @@ Furthermore, Austin has the highest number of overall crimes (6615) for the comm
 
 A time series model was created to predict current crime trends (January 2020 - July 2023) based on past crime trends (2001 - 2019).
 
+&nbsp;
+
 ### *Chicago Crimes Time Series (January 2001 to July 2022):*
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/f7ed8f81-2467-42cc-9541-e52ebcfcfde4)
 
