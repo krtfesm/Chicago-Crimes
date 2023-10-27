@@ -64,9 +64,9 @@ Six different models were built for the Chicago Crimes time series. These models
 
 
 By the analysis of the errors, the best model was found to be the STLM ARIMA model with multiple seasonality. 
-This model, its predictions for Jan. 2020 to July 2023, and information about its residuals are shown below.
+This model, its forecast for Jan. 2020 to July 2023, and information about its residuals are shown below.
 
-\ 
+&nbsp;
 
 
 ### *Chicago Time Series with STLM ARIMA(4, 1, 2) Forecast with Multiple Seasonality:*
