@@ -10,6 +10,10 @@ Exploratory data analysis was conducted to investigate basic information about t
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/50991c9e-9645-4898-8dbf-86adcdb3d663)
 
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/b448d8b1-6099-494f-b265-801ad5a6adac)
+
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/331cb253-5316-4714-b677-9f86f1ae62d1)
+
 
 Main insights: 
 * Crimes occur most at 12 am, slowly decrease over time from midday.
