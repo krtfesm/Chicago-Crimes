@@ -8,20 +8,21 @@ Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/
 Exploratory data analysis was conducted to investigate basic information about the data set. This is present in the "EDA" 
 
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/50991c9e-9645-4898-8dbf-86adcdb3d663)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/32a972e0-d787-4f23-b8f1-72d2428e3723)
+
 
 
 Main insights: 
 * Crimes occur most at 12 am, slowly decrease over time from midday.
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/5410308d-c94e-4850-ba40-c83343c5570e)
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/acff647f-102c-45c3-8692-c05b8cc1576e)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/d3493dd5-c617-4836-be59-08295ae974b2)
 
 
 
 Theft, battery, and motor vehicle theft are the most common reported crimes.
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/d3493dd5-c617-4836-be59-08295ae974b2)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/271792d5-6652-4252-ab26-56729998e1b9)
+
 
 
 Correlation plots were mostly created to investigate different crimes relationships with domestic crimes and
