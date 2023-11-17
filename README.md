@@ -10,20 +10,19 @@ Exploratory data analysis was conducted to investigate basic information about t
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/32a972e0-d787-4f23-b8f1-72d2428e3723)
 
-
-
 Main insights: 
-* Crimes occur most at 12 am, slowly decrease over time from midday.
+* Crimes occur most at 12 am
+* Crimes slowly decrease over time from midday.
+
+&nbsp;
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/d3493dd5-c617-4836-be59-08295ae974b2)
 
-
-
 Theft, battery, and motor vehicle theft are the most common reported crimes.
 
+&nbsp;
+
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/271792d5-6652-4252-ab26-56729998e1b9)
-
-
 
 Correlation plots were mostly created to investigate different crimes relationships with domestic crimes and
 crimes with arrest.
