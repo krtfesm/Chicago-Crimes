@@ -4,9 +4,12 @@
 ### *Dataset*
 Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023).
 
+&nbsp;
+
 ## 1. Data Cleaning and EDA
 Exploratory data analysis was conducted to investigate basic information about the data set. This is present in the "EDA" 
 
+&nbsp;
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/32a972e0-d787-4f23-b8f1-72d2428e3723)
 
@@ -32,6 +35,8 @@ Whether or not crimes were correlated with domestic crimes depended on the crime
 damage had the highest correlations with domestic crimes, while narcotics and deceptive practice had the
 lowest correlations with domestic crimes.
 
+&nbsp;
+
 ## 2. Geographical visualization
 
 Plots of crime density in different Chicago areas were created using geopandas. These are shown below. 
@@ -41,6 +46,7 @@ Plots of crime density in different Chicago areas were created using geopandas. 
 By this, Fuller Park has the highest density of crimes (0.144%) by population for the community areas, while Edison Park has the smallest density of crimes (0.0124%) by population.
 Furthermore, Austin has the highest number of overall crimes (6615) for the community areas, while Edison Park has the smallest number of overall crimes (143).
 
+&nbsp;
 
 ## 3. Time Series
 
