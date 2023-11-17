@@ -14,7 +14,9 @@ Exploratory data analysis was conducted to investigate basic information about t
 Main insights: 
 * Crimes occur most at 12 am, slowly decrease over time from midday.
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/10ab67db-8e22-4d44-82e5-a71416704c64)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/5410308d-c94e-4850-ba40-c83343c5570e)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/acff647f-102c-45c3-8692-c05b8cc1576e)
+
 
 
 Theft, battery, and motor vehicle theft are the most common reported crimes.
