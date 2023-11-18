@@ -2,11 +2,11 @@
 #### *Analysis of Chicago crime data in 2023 using Python and R.*
 &nbsp;
 ### *Dataset*
-Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023).
+Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023 for first two sections, on 8/7/2023 for the time series section).
 
-The "EDA" and "Geographical Vizualization" sections were created using data from 2023.
+The "EDA" and "Geographical Vizualization" sections were created using data from 2023 (1/1/2023 to 7/18/2023).
 
-The time series was computed after transforming the dataset to only include crime counts per day. 
+The time series was computed after transforming the dataset to only include crime counts per day. Data from this portion began on 1/1/2001 and ended on 7/31/2023. 
 
 &nbsp;
 
