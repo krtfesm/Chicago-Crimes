@@ -4,6 +4,10 @@
 ### *Dataset*
 Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023).
 
+The "EDA" and "Geographical Vizualization" sections were created using data from 2023.
+
+The time series was computed after transforming the dataset to only include crime counts per day. 
+
 &nbsp;
 
 ## 1. Data Cleaning and EDA
