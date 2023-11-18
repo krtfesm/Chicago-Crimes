@@ -1,9 +1,9 @@
 # Chicago-Crimes
 #### *Analysis of Chicago crime data in 2023 using Python and R.*
 
-[Data Cleaning and EDA]{## 1. Data Cleaning and EDA}
-[Geographical visualization](## 2. Geographical visualization)
-[Time Series](## 3. Time Series)
+[Data Cleaning and EDA](##1.-Data-Cleaning-and-EDA)
+[Geographical visualization](##2.-Geographical-visualization)
+[Time Series](##3.-Time-Series)
 &nbsp;
 ### *Dataset*
 Data was acquired from https://data.cityofchicago.org/Public-Safety/Crimes-2023/xguy-4ndq (on 7/19/2023 for first two sections, on 8/7/2023 for the time series section).
