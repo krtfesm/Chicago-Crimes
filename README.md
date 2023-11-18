@@ -13,9 +13,7 @@ Exploratory data analysis was conducted to investigate basic information about t
 
 ![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/32a972e0-d787-4f23-b8f1-72d2428e3723)
 
-Main insights: 
-* Crimes occur most at 12 am
-* Crimes slowly decrease over time from midday.
+Crimes occur most frequently at 12 am. Apart from this, crimes slowly increase from 6 am to 3 pm, and then they slowly decrease until around 5 am (excluding 12 am)
 
 &nbsp;
 
