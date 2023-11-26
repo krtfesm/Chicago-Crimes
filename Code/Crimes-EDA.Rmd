@@ -254,6 +254,7 @@ aplot +
 
 
 ```
+\
 
 \
 \
@@ -265,14 +266,17 @@ aplot +
 
 # split correlation plots for better visualization
 corrCounts <- dfCounts[3:9] %>% cor(method = 'pearson')
-corrCounts %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
+corr1 <- corrCounts %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
                                       colors = c('lightgoldenrod2', 'white', 
                                                  'palegreen4'))
 
 corrCounts2 <- dfCounts[c(3:4, 10:14)] %>% cor(method = 'pearson')
-corrCounts2 %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
+corr2 <- corrCounts2 %>% ggcorrplot::ggcorrplot(lab = TRUE, type = 'upper', 
                                        colors = c('lightgoldenrod2', 'white', 
                                                   'palegreen4'))
+
+ggarrange(corr1, corr2, common.legend = TRUE, legend = 'bottom')
+
 
 
 ```
@@ -299,7 +303,8 @@ domestic crimes.
 ```{r}
 
 # # dataset for each type of primary type of crime, with their frequency counts
-stabType <- tail(sort(tabType), 10)
+stabType <- head(sort(tabType, 
+                      decreasing = TRUE), 10)
 tabTypeDF <- data.frame(stabType)
 # tabTypeDF <- data.frame(tabType)
 colnames(tabTypeDF) <- c('Types', 'Frequency')
@@ -308,7 +313,7 @@ colnames(tabTypeDF) <- c('Types', 'Frequency')
 tabTypeDF$Types <- sapply(tabTypeDF$Types, toString)
 
 # sum other crimes that won't be included in visualization
-otherCrimesSum <- sum(tabTypeDF[tabTypeDF$Frequency < stabType[1],]$Frequency)
+otherCrimesSum <- sum(tabTypeDF[tabTypeDF$Frequency < stabType[length(stabType)],]$Frequency)
 
 # other crimes variable that is already set
 otherCrimesVal <- tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE',]$Frequency
@@ -317,13 +322,12 @@ otherCrimesVal <- tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE',]$Frequency
 tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE', 2] <- sum(otherCrimesSum, 
                                                         otherCrimesVal)
 
-# sorting the dataset
-tabTypeDF <- tabTypeDF[order(tabTypeDF$Frequency),]
-
+# # sorting the dataset
+# tabTypeDF <- tabTypeDF[order(tabTypeDF$Frequency,
+#                              decreasing = TRUE),]
 
 # factor strings so that it sorts properly
 tabTypeDF$Types <- factor(tabTypeDF$Types, levels = rev(tabTypeDF$Types))
-
 
 ```
 
@@ -336,8 +340,10 @@ tabTypeDF$Types <- factor(tabTypeDF$Types, levels = rev(tabTypeDF$Types))
 ```{r}
 
 # Pie plot for most common types of crimes commit
-pieP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,], 
-               aes(x="", y=Frequency, fill=Types)) +
+pieP <- ggplot(tabTypeDF, 
+               aes(x="", 
+                   y=100*Frequency/sum(Frequency), 
+                   fill=Types)) +
         geom_bar(stat="identity", width=1, color = 'white') +
         coord_polar("y", start=0) + 
         theme_void() + 
@@ -350,7 +356,7 @@ pieP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,],
                           labels = c(tabTypeDF$Types))
 
 # Bar plot for the most common types of crimes commit
-barP <- ggplot(tabTypeDF[tabTypeDF$Frequency > 1000,], 
+barP <- ggplot(tabTypeDF, 
                aes(x=Types, y=Frequency, fill = Types)) +
         geom_bar(stat="identity", width=1, color = 'white') + 
         theme_bw()  + 
@@ -366,7 +372,7 @@ tabTypeDFAvg <- tabTypeDF
 tabTypeDFAvg$Frequency <- tabTypeDFAvg$Frequency / numDays
 
 # Bar plot for the most common types of crimes commit, as mean values
-barPAvg <- ggplot(tabTypeDFAvg[tabTypeDFAvg$Frequency > 1,], 
+barPAvg <- ggplot(tabTypeDFAvg, 
                aes(x=Types, y=Frequency, fill = Types)) +
                geom_bar(stat="identity", width=1, color = 'white') + 
                theme_bw()  + 
