@@ -327,7 +327,7 @@ tabTypeDF[tabTypeDF$Types == 'OTHER OFFENSE', 2] <- sum(otherCrimesSum,
 #                              decreasing = TRUE),]
 
 # factor strings so that it sorts properly
-tabTypeDF$Types <- factor(tabTypeDF$Types, levels = rev(tabTypeDF$Types))
+tabTypeDF$Types <- factor(tabTypeDF$Types, levels = tabTypeDF$Types)
 
 ```
 
@@ -352,8 +352,7 @@ pieP <- ggplot(tabTypeDF,
         geom_text(aes(label = paste0(round(100*Frequency/sum(Frequency)),
                                      "%")), 
                   position = position_stack(vjust = 0.5)) + 
-        scale_fill_brewer('Types', palette = 'Set3',
-                          labels = c(tabTypeDF$Types))
+        scale_fill_brewer('Types', palette = 'Set3')
 
 # Bar plot for the most common types of crimes commit
 barP <- ggplot(tabTypeDF, 
