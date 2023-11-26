@@ -27,9 +27,9 @@ Crimes occur most frequently at 12 am. Apart from this, crimes slowly increase f
 
 &nbsp;
 
-![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/d3493dd5-c617-4836-be59-08295ae974b2)
+![image](https://github.com/krtfesm/Chicago-Crimes/assets/110089197/66ade37e-e57d-4fa8-9efd-135a39baef27)
 
-Theft, battery, and motor vehicle theft are the most common reported crimes.
+Theft, battery, and criminal damage are the most common reported crimes.
 
 &nbsp;
 
