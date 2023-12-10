@@ -2,7 +2,7 @@
 #### *Analysis of Chicago crime data in 2023 using Python and R.*
 
 ### *Sections*
-1. [Data Cleaning and EDA](##1-Data-Cleaning-and-EDA)
+1. [Data Cleaning and EDA](#1-Data-Cleaning-and-EDA)
 2. [Geographical visualization](#2-geographical-visualization)
 3. [Time Series](#3-Time-Series)
    
