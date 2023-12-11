@@ -16,6 +16,8 @@ The time series was computed after transforming the dataset to only include crim
 
 Datasets used for this project are in the "Data" section of the repository. These datasets are from after the data manipulation shown in the code, as the csv files were too large to upload to github pre-manipulation. The csv file for the data from 1/1/2001 to 7/31/2023 is overall too large to upload to github, so that dataset was not included in the "Data" section. This data can be acquired from the link given above and transformed to only include counts per day on the same website. 
 
+The code and report files for this project are in the "Code" section of the repository and additional plots are in the "Plot" section.
+
 &nbsp;
 
 ## 1. Data Cleaning and EDA
