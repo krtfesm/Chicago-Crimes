@@ -14,6 +14,8 @@ The "EDA" and "Geographical Vizualization" sections were created using data from
 
 The time series was computed after transforming the dataset to only include crime counts per day. Data from this portion began on 1/1/2001 and ended on 7/31/2023. 
 
+Datasets used for this project are in the "Data" section of the repository. These datasets are from after the data manipulation shown in the code, as the csv files were too large to upload to github pre-manipulation. The csv file for the data from 1/1/2001 to 7/31/2023 is overall too large to upload to github, so that dataset was not included in the "Data" section. This data can be acquired from the link given above and transformed to only include counts per day on the same website. 
+
 &nbsp;
 
 ## 1. Data Cleaning and EDA
