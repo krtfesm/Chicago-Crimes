@@ -65,7 +65,7 @@ df %>% head
 ```{r, warning = FALSE, message = FALSE}
 
 # Crimes from 2001 to 2023 (Jan-July)
-dfTotal <- read.csv("C:/Users/krtfe/Downloads/Crimes_-_2001_to_Present.csv")
+dfTotal <- read.csv("Crimes_-_2001_to_Present.csv")
 
 # adding useful columns, dates, times, time of day
 dfTotal['Date'] <- substr(dfTotal$Date, 
