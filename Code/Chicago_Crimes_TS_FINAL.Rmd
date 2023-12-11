@@ -15,7 +15,7 @@ library(ggplot2)
 library(forecast)
 library(reshape2)
 
-df <- read.csv("C:/Users/krtfe/Downloads/Crimes_-_2023 (ret. 082023).csv")
+df <- read.csv("Crimes_-_2023 (ret. 082023).csv")
 
 cat('Pre-cleaning summary:\n\n')
 df %>% summary %>% print
